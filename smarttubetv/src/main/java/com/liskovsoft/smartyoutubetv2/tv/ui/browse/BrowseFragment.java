@@ -47,7 +47,6 @@ import java.util.Map;
  */
 public class BrowseFragment extends BrowseSupportFragment implements BrowseView {
     private static final String TAG = BrowseFragment.class.getSimpleName();
-    private static final String SELECTED_HEADER_INDEX = "SelectedHeaderIndex";
     private ArrayObjectAdapter mSectionRowAdapter;
     private BrowsePresenter mBrowsePresenter;
     private Map<Integer, BrowseSection> mSections;
@@ -55,17 +54,13 @@ public class BrowseFragment extends BrowseSupportFragment implements BrowseView 
     private Handler mHandler;
     private ProgressBarManager mProgressBarManager;
     private boolean mIsFragmentCreated;
-    private int mSelectedHeaderIndex = -1;
     private boolean mFocusOnContent;
     private CrashRestorer mCrashRestorer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);
-
-        if (savedInstanceState != null) {
-            mSelectedHeaderIndex = savedInstanceState.getInt(SELECTED_HEADER_INDEX, -1);
-        }
+        
         mCrashRestorer = new CrashRestorer(getContext(), savedInstanceState);
         mIsFragmentCreated = true;
 
@@ -87,10 +82,8 @@ public class BrowseFragment extends BrowseSupportFragment implements BrowseView 
         super.onSaveInstanceState(outState);
 
         // Called when the activity is paused
-        // Store position in case activity is crashed
-        int selectedPosition = getSelectedPosition();
-        outState.putInt(SELECTED_HEADER_INDEX, selectedPosition != -1 ? selectedPosition : mSelectedHeaderIndex);
-        mCrashRestorer.persist(outState, mBrowsePresenter.getCurrentVideo());
+        mCrashRestorer.persistHeaderIndex(outState, getSelectedPosition());
+        mCrashRestorer.persistVideo(outState, mBrowsePresenter.getCurrentVideo());
     }
 
     @Override
@@ -112,16 +105,12 @@ public class BrowseFragment extends BrowseSupportFragment implements BrowseView 
 
         mBrowsePresenter.onViewInitialized();
 
-        if (mSelectedHeaderIndex != -1) {
-            // Restore state after crash
-            selectSection(mSelectedHeaderIndex, true);
-            mSelectedHeaderIndex = -1;
-
-            // Restore state after crash
-            selectSectionItem(mCrashRestorer.getSelectedVideo());
-        }
-
-        mCrashRestorer.restore();
+        // Restore state after crash
+        mCrashRestorer.restoreHeader((idx, video) -> {
+            selectSection(idx, true);
+            selectSectionItem(video);
+        });
+        mCrashRestorer.restorePlayback();
     }
 
     @Override

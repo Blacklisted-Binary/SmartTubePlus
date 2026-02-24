@@ -76,7 +76,7 @@ public class SearchTagsFragment extends SearchTagsFragmentBase {
         super.onSaveInstanceState(outState);
 
         // Called when the activity is paused
-        mCrashRestorer.persist(outState, mSearchPresenter.getCurrentVideo());
+        mCrashRestorer.persistVideo(outState, mSearchPresenter.getCurrentVideo());
     }
 
     @Override
@@ -85,7 +85,8 @@ public class SearchTagsFragment extends SearchTagsFragmentBase {
 
         mSearchPresenter.onViewInitialized();
 
-        mCrashRestorer.restore();
+        // Restore state after crash
+        mCrashRestorer.restorePlayback();
     }
 
     @Override

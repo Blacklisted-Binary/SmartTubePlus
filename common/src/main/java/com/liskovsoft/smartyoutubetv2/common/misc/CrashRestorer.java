@@ -10,11 +10,17 @@ import com.liskovsoft.smartyoutubetv2.common.app.presenters.PlaybackPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.views.ViewManager;
 
 public class CrashRestorer {
+    private static final String SELECTED_HEADER_INDEX = "SelectedHeaderIndex";
     private static final String SELECTED_VIDEO = "SelectedVideo";
     private static final String IS_PLAYER_IN_FOREGROUND = "IsPlayerInForeground";
+    private int mSelectedHeaderIndex = -1;
     private Video mSelectedVideo;
     private boolean mIsPlayerInForeground;
     private final Context mContext;
+
+    public interface OnRestoreHeader {
+        void onRestore(int selectedHeaderIndex, Video selectedVideo);
+    }
 
     public CrashRestorer(Context context, Bundle savedState) {
         mContext = context.getApplicationContext();
@@ -26,11 +32,20 @@ public class CrashRestorer {
             return;
         }
 
+        mSelectedHeaderIndex = savedState.getInt(SELECTED_HEADER_INDEX, -1);
         mSelectedVideo = Video.fromString(savedState.getString(SELECTED_VIDEO));
         mIsPlayerInForeground = savedState.getBoolean(IS_PLAYER_IN_FOREGROUND, false);
     }
 
-    public void persist(Bundle outState, Video currentVideo) {
+    public void persistHeaderIndex(Bundle outState, int selectedPosition) {
+        if (selectedPosition == -1) { // multiple crashes without user interaction
+            selectedPosition = mSelectedHeaderIndex;
+        }
+
+        outState.putInt(SELECTED_HEADER_INDEX, selectedPosition);
+    }
+
+    public void persistVideo(Bundle outState, Video currentVideo) {
         if (currentVideo == null) { // multiple crashes without user interaction
             currentVideo = mSelectedVideo;
         }
@@ -41,7 +56,7 @@ public class CrashRestorer {
         outState.putBoolean(IS_PLAYER_IN_FOREGROUND, ViewManager.instance(mContext).isPlayerInForeground());
     }
 
-    public void restore() {
+    public void restorePlayback() {
         if (mIsPlayerInForeground && PlaybackPresenter.instance(mContext).getPlayer() == null) {
             VideoStateService stateService = VideoStateService.instance(mContext);
             boolean isVideoStateSynced = mSelectedVideo == null || stateService.getByVideoId(mSelectedVideo.videoId) != null;
@@ -53,7 +68,12 @@ public class CrashRestorer {
         mIsPlayerInForeground = false;
     }
 
-    public Video getSelectedVideo() {
-        return mSelectedVideo;
+    public void restoreHeader(OnRestoreHeader onRestoreHeader) {
+        if (mSelectedHeaderIndex != -1) {
+            onRestoreHeader.onRestore(mSelectedHeaderIndex, mSelectedVideo);
+        }
+
+        // Restore can be called only once
+        mSelectedHeaderIndex = -1;
     }
 }
