@@ -5,7 +5,7 @@
 
     <!-- Status messages -->
     <string name="status_searching">Searching for SmartTubePlus devices on the network…</string>
-    <string name="status_no_devices">No SmartTubePlus devices found. Make sure the TV app is running and the Companion app server is enabled in its settings.</string>
+    <string name="status_no_devices">No SmartTubePlus devices found. Make sure the TV app is running and the companion app server is enabled in its settings.</string>
     <string name="status_connected">Connected to %s</string>
     <string name="status_sending">Sending…</string>
     <string name="status_sent_ok">Sent successfully</string>

@@ -144,7 +144,7 @@ public class TvRemoteClient {
 
     private static String urlEncode(String value) {
         try {
-            return URLEncoder.encode(value, "UTF-8");
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
         } catch (Exception e) {
             return value;
         }
