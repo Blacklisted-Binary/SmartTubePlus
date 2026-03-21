@@ -74,6 +74,7 @@ import com.liskovsoft.smartyoutubetv2.common.exoplayer.selector.FormatItem.Video
 import com.liskovsoft.smartyoutubetv2.common.exoplayer.selector.TrackSelectorUtil;
 import com.liskovsoft.smartyoutubetv2.common.exoplayer.selector.track.MediaTrack;
 import com.liskovsoft.smartyoutubetv2.common.misc.MotherActivity;
+import com.liskovsoft.smartyoutubetv2.common.misc.CompanionServerService;
 import com.liskovsoft.smartyoutubetv2.common.misc.RemoteControlService;
 import com.liskovsoft.smartyoutubetv2.common.misc.RemoteControlWorker;
 import com.liskovsoft.smartyoutubetv2.common.misc.ScreensaverManager;
@@ -226,6 +227,20 @@ public class Utils {
         } else {
             stopService(context, RemoteControlService.class);
         }
+    }
+
+    public static void startCompanionServer(Context context) {
+        if (context == null || VERSION.SDK_INT <= 19) {
+            return;
+        }
+        startService(context, CompanionServerService.class);
+    }
+
+    public static void stopCompanionServer(Context context) {
+        if (context == null || VERSION.SDK_INT <= 19) {
+            return;
+        }
+        stopService(context, CompanionServerService.class);
     }
 
     private static void bindService(Context context, Intent serviceIntent) {

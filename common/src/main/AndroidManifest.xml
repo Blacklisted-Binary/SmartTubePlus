@@ -54,6 +54,11 @@
             android:enabled="true"
             android:foregroundServiceType="connectedDevice"/>
         <service
+            android:name="com.liskovsoft.smartyoutubetv2.common.misc.CompanionServerService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice"/>
+        <service
             android:name="com.liskovsoft.smartyoutubetv2.common.misc.BackgroundPlaybackService"
             android:enabled="true"/>
 
