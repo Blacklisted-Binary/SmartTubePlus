@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ── App title ── -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginBottom="4dp" />
+
+        <!-- ── Status bar ── -->
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/status_searching"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="12dp" />
+
+        <!-- ── Device list section ── -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/section_devices"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tv_no_devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/status_no_devices"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone"
+            android:layout_marginBottom="4dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_devices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="20dp" />
+
+        <!-- ── Remote control section ── -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/section_remote"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Row 1: Prev · Play · Pause · Next -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btn_prev"
+                style="@style/RemoteButton"
+                android:text="@string/btn_prev"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_play"
+                style="@style/RemoteButton.Primary"
+                android:text="@string/btn_play"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_pause"
+                style="@style/RemoteButton"
+                android:text="@string/btn_pause"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_next"
+                style="@style/RemoteButton"
+                android:text="@string/btn_next" />
+        </LinearLayout>
+
+        <!-- Row 2: Seek BWD · Toggle · Seek FWD -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btn_seek_bwd"
+                style="@style/RemoteButton"
+                android:text="@string/btn_seek_bwd"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_toggle"
+                style="@style/RemoteButton.Primary"
+                android:text="@string/btn_toggle"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_seek_fwd"
+                style="@style/RemoteButton"
+                android:text="@string/btn_seek_fwd" />
+        </LinearLayout>
+
+        <!-- Row 3: Vol Down · Vol Up -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_vol_down"
+                style="@style/RemoteButton"
+                android:text="@string/btn_vol_down"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_vol_up"
+                style="@style/RemoteButton"
+                android:text="@string/btn_vol_up" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

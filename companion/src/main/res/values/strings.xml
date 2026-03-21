@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmartTube Remote</string>
+    <string name="cast_to_tv">Cast to TV</string>
+
+    <!-- Status messages -->
+    <string name="status_searching">Searching for SmartTubePlus devices on the network…</string>
+    <string name="status_no_devices">No SmartTubePlus devices found. Make sure the TV app is running and the Companion app server is enabled in its settings.</string>
+    <string name="status_connected">Connected to %s</string>
+    <string name="status_sending">Sending…</string>
+    <string name="status_sent_ok">Sent successfully</string>
+    <string name="status_casting_to">Casting to %s</string>
+
+    <!-- Error messages -->
+    <string name="error_no_device">No SmartTubePlus TV found. Open the TV app and enable the Companion app server in Settings → General.</string>
+    <string name="error_send_failed">Failed to send: %s</string>
+
+    <!-- Section headers -->
+    <string name="section_devices">Nearby devices</string>
+    <string name="section_remote">Remote control</string>
+
+    <!-- Remote control buttons -->
+    <string name="btn_play">▶ Play</string>
+    <string name="btn_pause">⏸ Pause</string>
+    <string name="btn_toggle">⏯ Play/Pause</string>
+    <string name="btn_next">⏭ Next</string>
+    <string name="btn_prev">⏮ Prev</string>
+    <string name="btn_seek_fwd">⏩ +10s</string>
+    <string name="btn_seek_bwd">⏪ −10s</string>
+    <string name="btn_vol_up">🔊 Vol+</string>
+    <string name="btn_vol_down">🔈 Vol−</string>
+</resources>
