@@ -90,6 +90,7 @@ public class GeneralData implements ProfileChangeListener {
     private int mLocalDriveBackupFreqDays;
     private List<Video> mOldPinnedItems;
     private boolean mIsRemapSToSpeedToggleEnabled;
+    private boolean mIsCompanionServerEnabled;
     private final Runnable mPersistStateInt = this::persistStateInt;
 
     private GeneralData(Context context) {
@@ -718,6 +719,15 @@ public class GeneralData implements ProfileChangeListener {
         persistState();
     }
 
+    public boolean isCompanionServerEnabled() {
+        return mIsCompanionServerEnabled;
+    }
+
+    public void enableCompanionServer(boolean enable) {
+        mIsCompanionServerEnabled = enable;
+        persistState();
+    }
+
     /**
      * Fixed ConcurrentModificationException after onProfileChanged()<br/>
      * Happened inside cleanupPinnedItems()
@@ -803,6 +813,7 @@ public class GeneralData implements ProfileChangeListener {
         mLocalDriveBackupFreqDays = Helpers.parseInt(split, 70, -1);
         mIsRemapFastForwardToSpeedToggleEnabled = Helpers.parseBoolean(split, 71, false);
         mIsRemapSToSpeedToggleEnabled = Helpers.parseBoolean(split, 72, true);
+        mIsCompanionServerEnabled = Helpers.parseBoolean(split, 73, false);
     }
 
     public void persistNow() {
@@ -829,7 +840,7 @@ public class GeneralData implements ProfileChangeListener {
                 mIsRemapChannelUpToVolumeEnabled, mIsRemapDpadUpToVolumeEnabled, mIsRemapDpadLeftToVolumeEnabled, mIsRemapNextToFastForwardEnabled,
                 mIsHideWatchedFromNotificationsEnabled, mChangelog, mPlayerExitShortcut, null, mIsFullscreenModeEnabled, null,
                 mIsRememberPinnedPositionEnabled, mSelectedItems, mIsFirstUseTooltipEnabled, mIsDeviceSpecificBackupEnabled, null,
-                mIsRemapPageDownToSpeedEnabled, mSearchExitShortcut, mGDriveBackupFreqDays, mLocalDriveBackupFreqDays, mIsRemapFastForwardToSpeedToggleEnabled, mIsRemapSToSpeedToggleEnabled));
+                mIsRemapPageDownToSpeedEnabled, mSearchExitShortcut, mGDriveBackupFreqDays, mLocalDriveBackupFreqDays, mIsRemapFastForwardToSpeedToggleEnabled, mIsRemapSToSpeedToggleEnabled, mIsCompanionServerEnabled));
     }
 
     @Override

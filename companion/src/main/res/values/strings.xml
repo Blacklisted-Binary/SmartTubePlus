@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmartTube Remote</string>
+    <string name="cast_to_tv">Cast to TV</string>
+
+    <!-- Status messages -->
+    <string name="status_searching">Searching for SmartTubePlus devices on the network…</string>
+    <string name="status_no_devices">No SmartTubePlus devices found. Make sure the TV app is running and the companion app server is enabled in its settings.</string>
+    <string name="status_connected">Connected to %s</string>
+    <string name="status_sending">Sending…</string>
+    <string name="status_sent_ok">Sent successfully</string>
+    <string name="status_casting_to">Casting to %s</string>
+    <string name="status_searching_on_tv">Searching for \'%s\' on TV…</string>
+
+    <!-- Error messages -->
+    <string name="error_no_device">No SmartTubePlus TV found. Open the TV app and enable the Companion app server in Settings → General.</string>
+    <string name="error_send_failed">Failed to send: %s</string>
+
+    <!-- Section headers -->
+    <string name="section_devices">Nearby devices</string>
+    <string name="section_remote">Remote control</string>
+    <string name="section_search">Search on TV</string>
+    <string name="section_bookmarks">Quick bookmarks</string>
+
+    <!-- Voice / keyboard search -->
+    <string name="btn_voice">🎤 Voice</string>
+    <string name="btn_keyboard">⌨ Type</string>
+    <string name="voice_search_hint">Say what to search…</string>
+    <string name="voice_not_supported">Voice search not supported on this device</string>
+    <string name="keyboard_search_title">Search on TV</string>
+    <string name="keyboard_search_hint">Enter search query or YouTube URL</string>
+
+    <!-- Bookmarks -->
+    <string name="bookmarks_hint">Tap to open · Long-press to edit</string>
+    <string name="bookmark_empty_slot">+ Slot %d</string>
+    <string name="bookmark_edit_title">Edit Bookmark %d</string>
+    <string name="bookmark_label_hint">Button label (optional)</string>
+    <string name="bookmark_url_hint">YouTube URL or search query</string>
+    <string name="bookmark_url_examples">Examples:\nhttps://www.youtube.com/channel/UC…\nhttps://www.youtube.com/playlist?list=…\nmy favourite search query</string>
+    <string name="bookmark_clear">Clear</string>
+
+    <!-- Remote control buttons -->
+    <string name="btn_play">▶ Play</string>
+    <string name="btn_pause">⏸ Pause</string>
+    <string name="btn_toggle">⏯ Play/Pause</string>
+    <string name="btn_next">⏭ Next</string>
+    <string name="btn_prev">⏮ Prev</string>
+    <string name="btn_seek_fwd">⏩ +10s</string>
+    <string name="btn_seek_bwd">⏪ −10s</string>
+    <string name="btn_vol_up">🔊 Vol+</string>
+    <string name="btn_vol_down">🔈 Vol−</string>
+
+    <!-- "Take It With You" video handoff -->
+    <string name="btn_take_with_me">📱 Take It With You</string>
+    <string name="handoff_title_default">Now playing</string>
+    <string name="handoff_elapsed_zero">0:00</string>
+    <string name="handoff_elapsed">Away for %s</string>
+    <string name="handoff_nothing_playing">Nothing is playing on the TV right now.</string>
+    <string name="status_handoff_fetching">Pausing TV and reading position…</string>
+    <string name="status_handoff_ready">Transferring \'%s\' to phone…</string>
+    <string name="status_handoff_returning">Syncing position back to TV…</string>
+    <string name="status_handoff_synced">Resumed on TV ✓</string>
+    <string name="btn_return_to_tv">↩ Return to TV</string>
+    <string name="btn_discard_handoff">✕ Close</string>
+    <string name="handoff_discard_title">Close without resuming?</string>
+    <string name="handoff_discard_message">The TV will stay paused. You can resume it manually from the remote control screen.</string>
+    <string name="handoff_discard_yes">Close</string>
+</resources>

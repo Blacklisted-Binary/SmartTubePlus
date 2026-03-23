@@ -106,6 +106,11 @@ public class SplashPresenter extends BasePresenter<SplashView> {
     private void runPerViewTasks() {
         Utils.postDelayed(mCheckForUpdates, APP_INIT_DELAY_MS);
         Utils.updateRemoteControlService(getContext());
+        if (GeneralData.instance(getContext()).isCompanionServerEnabled()) {
+            Utils.startCompanionServer(getContext());
+        } else {
+            Utils.stopCompanionServer(getContext());
+        }
 
         checkMasterPassword(() -> applyNewIntent(getView().getNewIntent()));
 
