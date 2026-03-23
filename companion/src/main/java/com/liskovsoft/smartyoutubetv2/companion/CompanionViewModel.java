@@ -28,12 +28,16 @@ public class CompanionViewModel extends AndroidViewModel implements TvDeviceDisc
             new MutableLiveData<>(null);
     private final MutableLiveData<String> mStatusMessage =
             new MutableLiveData<>("");
+    private final BookmarkPrefs mBookmarkPrefs;
+    private final MutableLiveData<List<Bookmark>> mBookmarks = new MutableLiveData<>();
 
     public CompanionViewModel(@NonNull Application application) {
         super(application);
         NsdManager nsdManager = (NsdManager) application.getSystemService(Application.NSD_SERVICE);
         mDiscovery = new TvDeviceDiscovery(nsdManager, this);
         mDiscovery.start();
+        mBookmarkPrefs = new BookmarkPrefs(application);
+        mBookmarks.setValue(mBookmarkPrefs.loadAll());
     }
 
     // ---- LiveData accessors -------------------------------------------------
@@ -48,6 +52,43 @@ public class CompanionViewModel extends AndroidViewModel implements TvDeviceDisc
 
     public LiveData<String> getStatusMessage() {
         return mStatusMessage;
+    }
+
+    public LiveData<List<Bookmark>> getBookmarks() {
+        return mBookmarks;
+    }
+
+    public void search(String text) {
+        if (mClient.getDevice() == null) {
+            setStatus(getApplication().getString(R.string.error_no_device));
+            return;
+        }
+        setStatus(getApplication().getString(R.string.status_searching_on_tv, text));
+        mClient.search(text, new TvRemoteClient.Callback() {
+            @Override
+            public void onSuccess() {
+                setStatus(getApplication().getString(R.string.status_sent_ok));
+            }
+            @Override
+            public void onError(String message) {
+                setStatus(getApplication().getString(R.string.error_send_failed, message));
+            }
+        });
+    }
+
+    public void saveBookmark(int slot, Bookmark bookmark) {
+        mBookmarkPrefs.save(slot, bookmark);
+        mBookmarks.setValue(mBookmarkPrefs.loadAll());
+    }
+
+    public void openBookmark(Bookmark bookmark) {
+        if (bookmark.isEmpty()) return;
+        String url = bookmark.url;
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            search(url);
+        } else {
+            play(url);
+        }
     }
 
     // ---- Device selection ---------------------------------------------------

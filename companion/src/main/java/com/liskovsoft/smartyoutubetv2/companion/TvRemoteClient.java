@@ -64,6 +64,16 @@ public class TvRemoteClient {
     }
 
     /**
+     * Sends a search query to the TV app.
+     *
+     * @param text     Search query text
+     * @param callback Result callback — may be null
+     */
+    public void search(String text, Callback callback) {
+        post("/search", "text=" + urlEncode(text), callback);
+    }
+
+    /**
      * Quick health-check.  Returns silently on success; calls {@code onError} on failure.
      */
     public void ping(Callback callback) {

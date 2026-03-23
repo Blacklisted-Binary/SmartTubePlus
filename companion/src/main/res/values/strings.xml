@@ -10,6 +10,7 @@
     <string name="status_sending">Sending…</string>
     <string name="status_sent_ok">Sent successfully</string>
     <string name="status_casting_to">Casting to %s</string>
+    <string name="status_searching_on_tv">Searching for \'%s\' on TV…</string>
 
     <!-- Error messages -->
     <string name="error_no_device">No SmartTubePlus TV found. Open the TV app and enable the Companion app server in Settings → General.</string>
@@ -18,6 +19,25 @@
     <!-- Section headers -->
     <string name="section_devices">Nearby devices</string>
     <string name="section_remote">Remote control</string>
+    <string name="section_search">Search on TV</string>
+    <string name="section_bookmarks">Quick bookmarks</string>
+
+    <!-- Voice / keyboard search -->
+    <string name="btn_voice">🎤 Voice</string>
+    <string name="btn_keyboard">⌨ Type</string>
+    <string name="voice_search_hint">Say what to search…</string>
+    <string name="voice_not_supported">Voice search not supported on this device</string>
+    <string name="keyboard_search_title">Search on TV</string>
+    <string name="keyboard_search_hint">Enter search query or YouTube URL</string>
+
+    <!-- Bookmarks -->
+    <string name="bookmarks_hint">Tap to open · Long-press to edit</string>
+    <string name="bookmark_empty_slot">+ Slot %d</string>
+    <string name="bookmark_edit_title">Edit Bookmark %d</string>
+    <string name="bookmark_label_hint">Button label (optional)</string>
+    <string name="bookmark_url_hint">YouTube URL or search query</string>
+    <string name="bookmark_url_examples">Examples:\nhttps://www.youtube.com/channel/UC…\nhttps://www.youtube.com/playlist?list=…\nmy favourite search query</string>
+    <string name="bookmark_clear">Clear</string>
 
     <!-- Remote control buttons -->
     <string name="btn_play">▶ Play</string>

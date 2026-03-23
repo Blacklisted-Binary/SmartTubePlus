@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.liskovsoft.sharedutils.mylogger.Log;
 import com.liskovsoft.smartyoutubetv2.common.R;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.PlaybackPresenter;
+import com.liskovsoft.smartyoutubetv2.common.app.presenters.SearchPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.SplashPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.views.PlaybackView;
 import com.liskovsoft.smartyoutubetv2.common.app.views.ViewManager;
@@ -170,6 +171,8 @@ public class CompanionServerService extends Service {
                 response = handlePlay(body);
             } else if ("POST".equalsIgnoreCase(method) && "/command".equals(path)) {
                 response = handleCommand(body);
+            } else if ("POST".equalsIgnoreCase(method) && "/search".equals(path)) {
+                response = handleSearch(body);
             } else {
                 response = buildResponse(404, "{\"error\":\"Not Found\"}");
             }
@@ -195,6 +198,21 @@ public class CompanionServerService extends Service {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(decodedUrl));
                 SplashPresenter.instance(getApplicationContext()).applyNewIntent(intent);
             });
+            return buildResponse(200, "{\"status\":\"ok\"}");
+        } catch (Exception e) {
+            Log.e(TAG, e);
+            return buildResponse(500, "{\"error\":\"Internal Server Error\"}");
+        }
+    }
+
+    private String handleSearch(String body) {
+        try {
+            String text = parseFormValue(body, "text");
+            if (text == null || text.isEmpty()) {
+                return buildResponse(400, "{\"error\":\"Missing text\"}");
+            }
+            final String decodedText = URLDecoder.decode(text, "UTF-8");
+            Utils.post(() -> SearchPresenter.instance(getApplicationContext()).startSearch(decodedText));
             return buildResponse(200, "{\"status\":\"ok\"}");
         } catch (Exception e) {
             Log.e(TAG, e);
