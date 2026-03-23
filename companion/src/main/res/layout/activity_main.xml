@@ -121,6 +121,17 @@
             android:textColor="@color/text_primary"
             android:layout_marginBottom="12dp" />
 
+        <!-- "Take It With You" handoff button — full width, prominent -->
+        <Button
+            android:id="@+id/btn_take_with_me"
+            style="@style/RemoteButton.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="0"
+            android:text="@string/btn_take_with_me"
+            android:textSize="15sp"
+            android:layout_marginBottom="16dp" />
+
         <!-- Row 1: Prev · Play · Pause · Next -->
         <LinearLayout
             android:layout_width="match_parent"

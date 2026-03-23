@@ -73,6 +73,139 @@ public class TvRemoteClient {
         post("/search", "text=" + urlEncode(text), callback);
     }
 
+    // ---- Status / handoff ---------------------------------------------------
+
+    /**
+     * Value object returned by {@link #getStatus}.
+     */
+    public static class StatusInfo {
+        public final String videoId;
+        public final long   positionMs;
+        public final long   durationMs;
+        public final String title;
+        public final boolean isPlaying;
+
+        public StatusInfo(String videoId, long positionMs, long durationMs,
+                          String title, boolean isPlaying) {
+            this.videoId    = videoId;
+            this.positionMs = positionMs;
+            this.durationMs = durationMs;
+            this.title      = title;
+            this.isPlaying  = isPlaying;
+        }
+
+        /** Returns true when the TV is currently playing something. */
+        public boolean hasVideo() {
+            return videoId != null && !videoId.isEmpty();
+        }
+    }
+
+    /** Callback for {@link #getStatus}. */
+    public interface StatusCallback {
+        void onStatus(StatusInfo info);
+        void onError(String message);
+    }
+
+    /**
+     * Queries the TV for current playback state via {@code GET /status}.
+     */
+    public void getStatus(StatusCallback callback) {
+        if (mDevice == null) {
+            if (callback != null) mMainHandler.post(() -> callback.onError("No device selected"));
+            return;
+        }
+        final String host = mDevice.host;
+        final int    port = mDevice.port;
+        mExecutor.submit(() -> {
+            try {
+                HttpURLConnection conn = (HttpURLConnection)
+                        new URL("http://" + host + ":" + port + "/status").openConnection();
+                conn.setConnectTimeout(TIMEOUT_MS);
+                conn.setReadTimeout(TIMEOUT_MS);
+                conn.setRequestMethod("GET");
+                int code = conn.getResponseCode();
+                if (code != 200) {
+                    conn.disconnect();
+                    deliverStatusError(callback, "HTTP " + code);
+                    return;
+                }
+                java.io.InputStream is = conn.getInputStream();
+                java.util.Scanner sc = new java.util.Scanner(is, "UTF-8").useDelimiter("\\A");
+                String json = sc.hasNext() ? sc.next() : "";
+                conn.disconnect();
+
+                StatusInfo info = parseStatus(json);
+                if (callback != null) {
+                    mMainHandler.post(() -> callback.onStatus(info));
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "getStatus error: " + e.getMessage());
+                deliverStatusError(callback, e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Tells the TV to seek to {@code positionMs} and resume playback via {@code POST /resume}.
+     */
+    public void resume(long positionMs, Callback callback) {
+        post("/resume", "positionMs=" + positionMs, callback);
+    }
+
+    // ---- Helpers ------------------------------------------------------------
+
+    private void deliverStatusError(StatusCallback callback, String msg) {
+        if (callback != null) {
+            mMainHandler.post(() -> callback.onError(msg));
+        }
+    }
+
+    /** Minimal hand-rolled JSON parser for the /status response (no external libs needed). */
+    private static StatusInfo parseStatus(String json) {
+        String videoId   = jsonString(json, "videoId");
+        long   posMs     = jsonLong(json,   "positionMs", 0);
+        long   durMs     = jsonLong(json,   "durationMs", 0);
+        String title     = jsonString(json, "title");
+        boolean playing  = jsonBool(json,   "isPlaying", false);
+        return new StatusInfo(videoId, posMs, durMs, title, playing);
+    }
+
+    private static String jsonString(String json, String key) {
+        String search = "\"" + key + "\":\"";
+        int start = json.indexOf(search);
+        if (start < 0) return "";
+        start += search.length();
+        int end = json.indexOf('"', start);
+        if (end < 0) return "";
+        return json.substring(start, end)
+                .replace("\\\"", "\"")
+                .replace("\\n", "\n")
+                .replace("\\\\", "\\");
+    }
+
+    private static long jsonLong(String json, String key, long def) {
+        String search = "\"" + key + "\":";
+        int start = json.indexOf(search);
+        if (start < 0) return def;
+        start += search.length();
+        int end = start;
+        // Allow a leading '-' for negative numbers; only digits after that.
+        if (start < json.length() && json.charAt(start) == '-') end++;
+        while (end < json.length() && Character.isDigit(json.charAt(end))) end++;
+        try { return Long.parseLong(json.substring(start, end)); }
+        catch (NumberFormatException e) { return def; }
+    }
+
+    private static boolean jsonBool(String json, String key, boolean def) {
+        String search = "\"" + key + "\":";
+        int start = json.indexOf(search);
+        if (start < 0) return def;
+        String rest = json.substring(start + search.length()).trim();
+        if (rest.startsWith("true"))  return true;
+        if (rest.startsWith("false")) return false;
+        return def;
+    }
+
     /**
      * Quick health-check.  Returns silently on success; calls {@code onError} on failure.
      */

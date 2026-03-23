@@ -49,4 +49,20 @@
     <string name="btn_seek_bwd">⏪ −10s</string>
     <string name="btn_vol_up">🔊 Vol+</string>
     <string name="btn_vol_down">🔈 Vol−</string>
+
+    <!-- "Take It With You" video handoff -->
+    <string name="btn_take_with_me">📱 Take It With You</string>
+    <string name="handoff_title_default">Now playing</string>
+    <string name="handoff_elapsed_zero">0:00</string>
+    <string name="handoff_elapsed">Away for %s</string>
+    <string name="handoff_nothing_playing">Nothing is playing on the TV right now.</string>
+    <string name="status_handoff_fetching">Pausing TV and reading position…</string>
+    <string name="status_handoff_ready">Transferring \'%s\' to phone…</string>
+    <string name="status_handoff_returning">Syncing position back to TV…</string>
+    <string name="status_handoff_synced">Resumed on TV ✓</string>
+    <string name="btn_return_to_tv">↩ Return to TV</string>
+    <string name="btn_discard_handoff">✕ Close</string>
+    <string name="handoff_discard_title">Close without resuming?</string>
+    <string name="handoff_discard_message">The TV will stay paused. You can resume it manually from the remote control screen.</string>
+    <string name="handoff_discard_yes">Close</string>
 </resources>

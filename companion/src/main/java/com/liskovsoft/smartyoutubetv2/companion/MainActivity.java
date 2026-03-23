@@ -110,6 +110,29 @@ public class MainActivity extends AppCompatActivity {
         bindControlButton(R.id.btn_seek_bwd,  () -> mViewModel.sendCommand("SEEK_BWD"));
         bindControlButton(R.id.btn_vol_up,    () -> mViewModel.sendCommand("VOL_UP"));
         bindControlButton(R.id.btn_vol_down,  () -> mViewModel.sendCommand("VOL_DOWN"));
+
+        // "Take It With You" — pause TV, read position, open VideoHandoffActivity
+        bindControlButton(R.id.btn_take_with_me, this::startHandoff);
+    }
+
+    // ---- Handoff ("Take It With You") ----------------------------------------
+
+    private void startHandoff() {
+        mViewModel.startHandoff(new CompanionViewModel.HandoffCallback() {
+            @Override
+            public void onReady(TvRemoteClient.StatusInfo status) {
+                Intent intent = new Intent(MainActivity.this, VideoHandoffActivity.class);
+                intent.putExtra(VideoHandoffActivity.EXTRA_VIDEO_ID, status.videoId);
+                intent.putExtra(VideoHandoffActivity.EXTRA_START_MS,  status.positionMs);
+                intent.putExtra(VideoHandoffActivity.EXTRA_TITLE,     status.title);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     // ---- Voice search -------------------------------------------------------

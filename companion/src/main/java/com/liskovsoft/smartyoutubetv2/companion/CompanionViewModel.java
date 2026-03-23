@@ -138,6 +138,73 @@ public class CompanionViewModel extends AndroidViewModel implements TvDeviceDisc
         });
     }
 
+    // ---- Handoff ("Take It With You") ---------------------------------------
+
+    /** Callback delivered when {@link #startHandoff} successfully reads TV playback state. */
+    public interface HandoffCallback {
+        void onReady(TvRemoteClient.StatusInfo status);
+        void onError(String message);
+    }
+
+    /**
+     * Pauses the TV and queries its current playback position.
+     *
+     * <p>Delivers a {@link TvRemoteClient.StatusInfo} to {@code callback} so the caller
+     * can open {@link VideoHandoffActivity} with the correct video and start position.</p>
+     */
+    public void startHandoff(HandoffCallback callback) {
+        if (mClient.getDevice() == null) {
+            if (callback != null) callback.onError(getApplication().getString(R.string.error_no_device));
+            return;
+        }
+        // Step 1: pause the TV immediately
+        mClient.command("PAUSE", null);
+        setStatus(getApplication().getString(R.string.status_handoff_fetching));
+        // Step 2: read the current playback state
+        mClient.getStatus(new TvRemoteClient.StatusCallback() {
+            @Override
+            public void onStatus(TvRemoteClient.StatusInfo info) {
+                if (!info.hasVideo()) {
+                    setStatus(getApplication().getString(R.string.handoff_nothing_playing));
+                    if (callback != null) callback.onError(
+                            getApplication().getString(R.string.handoff_nothing_playing));
+                    return;
+                }
+                setStatus(getApplication().getString(R.string.status_handoff_ready, info.title));
+                if (callback != null) callback.onReady(info);
+            }
+
+            @Override
+            public void onError(String message) {
+                setStatus(getApplication().getString(R.string.error_send_failed, message));
+                if (callback != null) callback.onError(message);
+            }
+        });
+    }
+
+    /**
+     * Resumes the TV at the given position.  Called by {@link VideoHandoffActivity} just before
+     * it closes, forwarding the position the user reached while watching on the phone.
+     */
+    public void returnToTv(long positionMs) {
+        if (mClient.getDevice() == null) {
+            setStatus(getApplication().getString(R.string.error_no_device));
+            return;
+        }
+        setStatus(getApplication().getString(R.string.status_handoff_returning));
+        mClient.resume(positionMs, new TvRemoteClient.Callback() {
+            @Override
+            public void onSuccess() {
+                setStatus(getApplication().getString(R.string.status_handoff_synced));
+            }
+
+            @Override
+            public void onError(String message) {
+                setStatus(getApplication().getString(R.string.error_send_failed, message));
+            }
+        });
+    }
+
     // ---- TvDeviceDiscovery.Listener -----------------------------------------
 
     @Override

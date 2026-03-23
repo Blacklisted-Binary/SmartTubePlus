@@ -60,5 +60,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Video handoff player: keeps user watching on the phone while TV is paused -->
+        <activity
+            android:name=".VideoHandoffActivity"
+            android:exported="false"
+            android:label="@string/handoff_title_default"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
     </application>
 </manifest>

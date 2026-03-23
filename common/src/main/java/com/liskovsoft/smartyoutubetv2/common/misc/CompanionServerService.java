@@ -173,6 +173,10 @@ public class CompanionServerService extends Service {
                 response = handleCommand(body);
             } else if ("POST".equalsIgnoreCase(method) && "/search".equals(path)) {
                 response = handleSearch(body);
+            } else if ("GET".equalsIgnoreCase(method) && "/status".equals(path)) {
+                response = handleStatus();
+            } else if ("POST".equalsIgnoreCase(method) && "/resume".equals(path)) {
+                response = handleResume(body);
             } else {
                 response = buildResponse(404, "{\"error\":\"Not Found\"}");
             }
@@ -273,6 +277,91 @@ public class CompanionServerService extends Service {
                 Log.d(TAG, "Unknown command action: " + action);
                 break;
         }
+    }
+
+    /**
+     * GET /status  —  returns current playback state as JSON.
+     *
+     * <p>Player state is read on the main thread via a {@link java.util.concurrent.CountDownLatch}
+     * to avoid races, with a 3-second timeout so the HTTP thread never blocks indefinitely.</p>
+     */
+    private String handleStatus() {
+        final String[] result = {null};
+        final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+        Utils.post(() -> {
+            try {
+                PlaybackPresenter pp = PlaybackPresenter.instance(getApplicationContext());
+                PlaybackView player = pp.getPlayer();
+                if (player == null) {
+                    result[0] = "{\"videoId\":\"\",\"positionMs\":0,\"durationMs\":0"
+                            + ",\"title\":\"\",\"isPlaying\":false}";
+                } else {
+                    com.liskovsoft.smartyoutubetv2.common.app.models.data.Video video = player.getVideo();
+                    String videoId = (video != null && video.videoId != null)
+                            ? jsonEscape(video.videoId) : "";
+                    String title   = (video != null && video.title   != null)
+                            ? jsonEscape(video.title)   : "";
+                    long posMs = player.getPositionMs();
+                    long durMs = Math.max(player.getDurationMs(), 0);
+                    boolean playing = player.isPlaying();
+                    result[0] = "{\"videoId\":\"" + videoId
+                            + "\",\"positionMs\":" + posMs
+                            + ",\"durationMs\":"  + durMs
+                            + ",\"title\":\""     + title
+                            + "\",\"isPlaying\":"  + playing + "}";
+                }
+            } finally {
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await(3, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return result[0] != null
+                ? buildResponse(200, result[0])
+                : buildResponse(503, "{\"error\":\"Timeout reading player state\"}");
+    }
+
+    /** POST /resume  body: positionMs=&lt;ms&gt;  — seeks to position and unpauses. */
+    private String handleResume(String body) {
+        try {
+            String posStr = parseFormValue(body, "positionMs");
+            if (posStr == null || posStr.isEmpty()) {
+                return buildResponse(400, "{\"error\":\"Missing positionMs\"}");
+            }
+            final long posMs = Long.parseLong(posStr.trim());
+            if (posMs < 0) {
+                return buildResponse(400, "{\"error\":\"positionMs must be >= 0\"}");
+            }
+            Utils.post(() -> {
+                PlaybackPresenter pp = PlaybackPresenter.instance(getApplicationContext());
+                PlaybackView player = pp.getPlayer();
+                if (player != null) {
+                    long dur = player.getDurationMs();
+                    long clamped = (dur > 0) ? Math.min(posMs, dur) : posMs;
+                    player.setPositionMs(clamped);
+                    player.setPlayWhenReady(true);
+                }
+            });
+            return buildResponse(200, "{\"status\":\"ok\"}");
+        } catch (NumberFormatException e) {
+            return buildResponse(400, "{\"error\":\"Invalid positionMs\"}");
+        } catch (Exception e) {
+            Log.e(TAG, e);
+            return buildResponse(500, "{\"error\":\"Internal Server Error\"}");
+        }
+    }
+
+    /** Minimal JSON string escaping for title / videoId fields. */
+    private static String jsonEscape(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 
     private String parseFormValue(String body, String key) {
